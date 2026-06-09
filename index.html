@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ширкевич Валентина Васильевна — Поэзия</title>
+    <style>
+        /* Стиль старой бумажной страницы */
+        body {
+            background-color: #f6f3ea;
+            color: #2b2b2b;
+            font-family: "Georgia", serif;
+            line-height: 1.9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Шапка с именем автора */
+        header {
+            text-align: center;
+            margin-top: 50px;
+        }
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: "Arial", sans-serif;
+            color: #4a4a4a;
+            margin-bottom: 5px;
+        }
+        header p {
+            font-style: italic;
+            color: #8c8c8c;
+            margin-top: 0;
+            font-size: 1rem;
+        }
+
+        /* Панель звуков природы */
+        .audio-ambient {
+            margin: 20px 0;
+            padding: 10px 20px;
+            border: 1px solid #e0dbcd;
+            border-radius: 30px;
+            background-color: #faf8f5;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .ambient-btn {
+            background: none;
+            border: none;
+            font-family: "Arial", sans-serif;
+            font-size: 0.8rem;
+            color: #666;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .ambient-btn:hover {
+            color: #000;
+            background-color: #eee;
+        }
+        .ambient-btn.active {
+            background-color: #4a5d4e;
+            color: #fff;
+        }
+
+        /* Главный блок со стихотворением */
+        main {
+            max-width: 550px;
+            width: 85%;
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .poem-title {
+            font-weight: normal;
+            font-style: italic;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+
+        .poem-text {
+            font-size: 1.2rem;
+            text-align: left;
+            display: inline-block;
+            white-space: pre-line;
+            color: #333;
+        }
+
+        .poem-date {
+            font-style: italic;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        /* Подвал */
+        footer {
+            font-family: "Arial", sans-serif;
+            font-size: 0.75rem;
+            color: #b5b0a1;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            text-align: center;
+            border-top: 1px solid #e0dbcd;
+            padding-top: 20px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ширкевич Валентина Васильевна</h1>
+        <p>Поэзия души и природы</p>
+    </header>
+
+    <!-- Панель управления звуками атмосферы -->
+    <div class="audio-ambient">
+        <span style="font-family: Arial; font-size: 0.8rem; color: #888;">Атмосфера:</span>
+        <button class="ambient-btn" id="rain-btn">🌧️ Проливной дождь</button>
+        <button class="ambient-btn" id="forest-btn">🌲 Шумы леса</button>
+    </div>
+
+    <main>
+        <h2 class="poem-title">Дыхание земли</h2>
+        
+        <div class="poem-text">
+            Шуршит листва в плетении ветвей,
+            И капли поднебесные затихли.
+            Среди негромких, сонных вечеров
+            Рождаются забытые мотивы.
+
+            Земля вдыхает утренний туман,
+            Поля укрыты мягкой пеленою.
+            И каждый звук, что нам природой дан,
+            Становится звенящей тишиною.
+            
+            <div class="poem-date">2026</div>
+        </div>
+    </main>
+
+    <footer>
+        © В.В. Ширкевич
+    </footer>
+
+    <script>
+        // Инициализация аудиоконтекста для генерации шумов природы
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let rainNode = null;
+        let forestNode = null;
+
+        // Функция генерации розового шума (основа для дождя и ветра)
+        function createPinkNoise() {
+            const bufferSize = 4 * audioCtx.sampleRate;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            let b0, b1, b2, b3, b4, b5, b6;
+            b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+            
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                const pink = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                b6 = white * 0.115926;
+                output[i] = pink * 0.11; 
+            }
+            
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = noiseBuffer;
+            noise.loop = true;
+            return noise;
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        // Кнопка Дождя
+        document.getElementById('rain-btn').addEventListener('click', function() {
+            initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (!rainNode) {
+                rainNode = createPinkNoise();
+                // Низкочастотный фильтр для создания глухого звука капель дождя
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+                
+                rainNode.connect(filter);
+                filter.connect(audioCtx.destination);
+                rainNode.start();
+                this.classList.add('active');
+            } else {
+                rainNode.stop();
+                rainNode = null;
+                this.classList.remove('active');
+            }
+        });
+
+        // Кнопка Леса (Ветер / Шелест)
+        document.getElementById('forest-btn').addEventListener('click', function() {
+            initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            if (!forestNode) {
+                forestNode = createPinkNoise();
+                // Фильтр для имитации шума листвы и ветра
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+                filter.Q.setValueAtTime(1, audioCtx.currentTime);
+
+                // Модуляция частоты для эффекта порывов ветра
+                const osc = audioCtx.createOscillator();
+                osc.frequency.setValueAtTime(0.2, audioCtx.currentTime); // медленные волны
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(200, audioCtx.currentTime);
+                
+                osc.connect(gain);
+                gain.connect(filter.frequency);
+                osc.start();
+
+                forestNode.connect(filter);
+                filter.connect(audioCtx.destination);
+                forestNode.start();
+                this.classList.add('active');
+            } else {
+                forestNode.stop();
+                forestNode = null;
+                this.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
